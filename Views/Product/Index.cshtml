@@ -1,0 +1,84 @@
+﻿@model List<Product>
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+}
+@* xu ly them vao gio hang *@
+@section Scripts {
+    <script>
+        document.querySelectorAll('.add-to-cart').forEach(btn => {
+            btn.addEventListener('click', async function (e) {
+                e.preventDefault(); // Ngăn submit form nếu có
+                const productId = this.getAttribute('data-id');
+                const response = await fetch('/Cart/AddToCart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `productId=${productId}`
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert(result.message);
+                } else if (result.redirect) {
+                    window.location.href = result.redirect;
+                } else {
+                    alert(result.message || "Có lỗi xảy ra.");
+                }
+            });
+        });
+    </script>
+}
+
+
+
+
+
+<div class="mx-5">
+    @* @if (TempData["Success"] != null) *@
+    @* { *@
+    @*     <div class="alert alert-success mt-3">@TempData["Success"]</div> *@
+    @* } *@
+    <div class="d-inline-block position-fixed bg-primary d-flex justify-content-center align-items-center rounded-circle" style="z-index:900;width:50px;height:50px;bottom:100px;right:30px;cursor:pointer">
+        <a class="nav-link text-light d-flex justify-content-center align-items-center" asp-controller="Cart" asp-action="Index">
+            <i class="bi bi-cart3 fs-2"></i>
+        </a>
+    </div>
+    <h2 class="text-center mb-4 text-light">Danh sách sản phẩm</h2>
+
+    
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card h-100 bg-dark text-white border-secondary">
+                    <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-info">@item.Name</h5>
+                        <p class="card-text text-truncate text-light-emphasis" title="@item.Description">@item.Description</p>
+                        <p class="card-text fw-bold text-danger">Giá: @item.Price.ToString("C")</p>
+                      
+                            <input type="hidden" name="productId" value="@item.Id" />
+                          
+                                @if (User?.Identity?.IsAuthenticated==true)
+                                {
+                                      <button type="button" class="btn btn-primary w-100 add-to-cart" data-id="@item.Id">
+                                           
+                                          🛒 Thêm vào giỏ hàng
+
+                                      </button >
+                                }
+                                else
+                                {
+                                    <a asp-controller="Account" asp-action="Login" class="btn btn-secondary text-light text-decoration-none mt-2 w-100">
+                                        🔒 Đăng nhập để mua hàng
+                                    </a>
+                                }
+                          
+                      
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

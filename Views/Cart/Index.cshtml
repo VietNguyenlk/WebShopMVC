@@ -1,0 +1,63 @@
+﻿@model List<AppMVC.Models.CartItem>
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">🛒 Giỏ hàng của bạn</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            Giỏ hàng của bạn đang trống.
+        </div>
+    }
+    else
+    {
+        <table class="table table-bordered text-center align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Hình ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Tổng</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <div style="height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                <img src="@item.ImageUrl" alt="@item.ProductName" style="object-fit: cover; width: 100%; max-height: 100%;" />
+                            </div>
+                        </td>
+                        <td class="text-light">@item.ProductName</td>
+                        <td class="text-light">@item.Price</td>
+                        <td class="text-light"> @item.Quantity</td>
+                        <td class="text-light">@(item.Price * item.Quantity) </td>
+                        <td>
+                            <a asp-action="RemoveFromCart" asp-route-productId="@item.ProductId" class="btn btn-danger btn-sm">
+                                ❌ Xóa
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="text-end">
+            <h4 class="fw-bold">
+                
+                Tổng cộng: @Model.Sum(item => item.Price * item.Quantity).ToString("C")
+            </h4>
+            <form asp-action="Checkout" method="post">
+                <button type="submit" class="btn btn-primary btn-lg mt-2">
+                    ✅ Thanh toán
+                </button>
+            </form>
+        </div>
+    }
+</div>
