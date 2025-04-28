@@ -1,4 +1,5 @@
 ﻿    using AppMVC.Data;
+using AppMVC.Helpers;
 using AppMVC.Models;
 using AppMVC.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,7 @@ namespace AppMVC.Controllers
             _context = context;
         
         }
+    
         public IActionResult Index()
         {
             var cart = GetCartItems();

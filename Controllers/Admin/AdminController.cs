@@ -1,7 +1,7 @@
 ﻿using AppMVC.Helpers;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AppMVC.Controllers
+namespace AppMVC.Controllers.Admin
 {
     [RoleAuthorize("Admin")]
     public class AdminController : Controller

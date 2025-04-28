@@ -55,7 +55,7 @@
 <body class="bg-dark text-light min-vh-100 d-flex flex-column">
     <header>
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark border-bottom border-secondary mb-3">
-            <div class="container">
+            <div class="container ">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ShopViet
 
                 </a>     
@@ -74,11 +74,14 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="OrderAdmin" asp-action="Index">Quản lý đơn hàng</a>
+                        </li>
                     </ul>
 
                 </div>
 
-                <div class="d-flex flex-row-reverse bd-highlight mb-3 bg-success rounded-2 mx-2">
+                <div class="d-flex flex-row-reverse bd-highlight mb-1 bg-success rounded-2 mx-2">
                     @* nếu là admin thì hiện thêm buuton nhay sang trang admin *@
                     @if (User?.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value == "Admin")
                     {
@@ -86,14 +89,14 @@
                     }
                 </div>
 
-                <div class="d-flex  flex-row-reverse bd-highlight bg-danger rounded-2  mb-3">
+                <div class="d-flex bg-danger  flex-row-reverse bd-highlight rounded-2  mb-1">
                     @if (User?.Identity?.IsAuthenticated == true)
                     {
                         <a class="nav-link text-light " asp-area="" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
                     }
                     else
                     {
-                        <a class="nav-link text-light" asp-area="" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                        <a class="nav-link text-light " asp-area="" asp-controller="Account" asp-action="Login">Đăng nhập</a>
                     }
                 </div>
               
