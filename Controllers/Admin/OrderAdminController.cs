@@ -21,7 +21,7 @@ namespace AppMVC.Controllers.Admin
         public async Task <IActionResult> Index()
         {
             var orders = await _context.Orders.Include(o => o.User)
-                .Include(o => o.User)
+                .Include(o => o.OrderDetails)
                 .ToListAsync();
             // return View("/Views/Admin/OrderAdmin/Index.cshtml");
            return View("/Views/Admin/OrderAdmin/Index.cshtml",orders);

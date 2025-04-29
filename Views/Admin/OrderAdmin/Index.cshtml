@@ -1,478 +1,219 @@
-﻿<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Quản lý Shop</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-    <style>
-        :root {
-            --dark-bg: #121212;
-            --dark-card: #1e1e1e;
-            --dark-border: #333;
-            --dark-text: #e4e6eb;
-            --dark-text-secondary: #b0b3b8;
-            --dark-primary: #4f46e5;
-            --dark-primary-hover: #4338ca;
-            --dark-accent: #8b5cf6;
-        }
+﻿@model List<Order>
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
 
-        body {
-            background-color: var(--dark-bg);
-            color: var(--dark-text);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+}
+@{
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
 
-        .navbar {
-            background-color: var(--dark-card);
-            border-bottom: 1px solid var(--dark-border);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .navbar-brand {
-            color: var(--dark-primary);
-            font-weight: 600;
-            font-size: 1.5rem;
-        }
-
-        .navbar-nav .nav-link {
-            color: var(--dark-text);
-            font-weight: 500;
-            position: relative;
-        }
-
-        .navbar-nav .nav-link:hover {
-            color: var(--dark-accent);
-        }
-
-        .navbar-nav .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: var(--dark-primary);
-        }
-
-        .table {
-            color: var(--dark-text);
-            border-color: var(--dark-border);
-        }
-
-        .table thead th {
-            background-color: var(--dark-card);
-            border-color: var(--dark-border);
-            color: var(--dark-text);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-        }
-
-        .table tbody td {
-            border-color: var(--dark-border);
-            vertical-align: middle;
-            padding: 1rem 0.75rem;
-        }
-
-        .table tbody tr:hover {
-            background-color: rgba(79, 70, 229, 0.1);
-        }
-
-        .card {
-            background-color: var(--dark-card);
-            border: 1px solid var(--dark-border);
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-header {
-            background-color: rgba(0, 0, 0, 0.2);
-            border-bottom: 1px solid var(--dark-border);
-            padding: 1rem 1.5rem;
-        }
-
-        .btn-primary {
-            background-color: var(--dark-primary);
-            border-color: var(--dark-primary);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--dark-primary-hover);
-            border-color: var(--dark-primary-hover);
-        }
-
-        .badge-status {
-            padding: 0.5em 0.75em;
-            border-radius: 6px;
-            font-weight: 500;
-            font-size: 0.8rem;
-        }
-
-        .badge-pending {
-            background-color: #f59e0b;
-            color: #fff;
-        }
-
-        .badge-completed {
-            background-color: #10b981;
-            color: #fff;
-        }
-
-        .badge-cancelled {
-            background-color: #ef4444;
-            color: #fff;
-        }
-
-        .price {
-            font-weight: 600;
-            color: var(--dark-accent);
-        }
-
-        .page-title {
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: var(--dark-text);
-            display: flex;
-            align-items: center;
-        }
-
-        .page-title i {
-            margin-right: 0.75rem;
-            color: var(--dark-primary);
-        }
-
-        .stats-card {
-            background: linear-gradient(45deg, var(--dark-card), #252525);
-            border-radius: 8px;
-            padding: 1.5rem;
-            height: 100%;
-            transition: all 0.3s ease;
-            border: 1px solid var(--dark-border);
-        }
-
-        .stats-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .stats-card .number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--dark-primary);
-        }
-
-        .stats-card .label {
-            color: var(--dark-text-secondary);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stats-card .icon {
-            font-size: 2.5rem;
-            color: var(--dark-primary);
-            opacity: 0.8;
-        }
-
-        .action-btn {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-            border-radius: 4px;
-            margin-right: 0.25rem;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .action-btn i {
-            margin-right: 0.25rem;
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 3rem 0;
-            color: var(--dark-text-secondary);
-        }
-
-        .no-data i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--dark-bg);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--dark-border);
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--dark-primary);
-        }
-    </style>
-
-</head>
-<body>
-    @model List<Order>
-    @{
-        Layout = "";
-    }
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg mb-4 " >
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-shopping-bag me-2"></i>
-                Shop Admin
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-tachometer-alt me-1"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#"><i class="fas fa-shopping-cart me-1"></i> Đơn hàng</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-box-open me-1"></i> Sản phẩm</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-users me-1"></i> Khách hàng</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-chart-line me-1"></i> Báo cáo</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container">
-        <!-- Dashboard Stats -->
-        <div class="row mb-4">
-            <div class="col-md-3 mb-3">
-                <div class="stats-card">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="number">42</div>
-                            <div class="label">Đơn hàng mới</div>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-shopping-cart"></i>
-                        </div>
-                    </div>
+<!-- Dashboard Stats -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="number">42</div>
+                    <div class="label">Đơn hàng mới</div>
                 </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="stats-card">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="number">16</div>
-                            <div class="label">Đang xử lý</div>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-spinner"></i>
-                        </div>
-                    </div>
+                <div class="icon">
+                    <i class="fas fa-shopping-cart"></i>
                 </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="stats-card">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="number">156</div>
-                            <div class="label">Hoàn thành</div>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="stats-card">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="number">8</div>
-                            <div class="label">Đã hủy</div>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-times-circle"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Page Title and Actions -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-0">
-                    <h2 class="page-title mb-0">
-                        <i class="fas fa-shopping-cart"></i> Danh Sách Đơn Hàng
-                    </h2>
-                    <div>
-                        <button class="btn btn-primary me-2">
-                            <i class="fas fa-plus me-1"></i> Tạo đơn hàng
-                        </button>
-                        <button class="btn btn-outline-light">
-                            <i class="fas fa-file-export me-1"></i> Xuất Excel
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Filters -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4 mb-3 mb-md-0">
-                        <label class="form-label  text-light">Tìm kiếm</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-dark text-light border-dark" placeholder="Tìm theo ID, tên khách hàng...">
-                            <button class="btn btn-primary" type="button">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-3 mb-md-0">
-                        <label class="form-label  text-light">Trạng thái</label>
-                        <select class="form-select bg-dark text-light border-dark">
-                            <option value="">Tất cả trạng thái</option>
-                            <option value="pending">Đang xử lý</option>
-                            <option value="completed">Hoàn thành</option>
-                            <option value="cancelled">Đã hủy</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3 mb-3 mb-md-0">
-                        <label class="form-label  text-light">Từ ngày</label>
-                        <input type="date" class="form-control bg-dark text-light border-dark">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label  text-light">Đến ngày</label>
-                        <input type="date" class="form-control bg-dark text-light border-dark">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Order List -->
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Khách hàng</th>
-                                <th>Ngày đặt</th>
-                                <th>Tổng tiền</th>
-                                <th>Trạng thái</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model != null && Model.Any())
-                            {
-                                @foreach (var order in Model)
-                                {
-                                    <tr>
-                                        <td>#@order.Id</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar me-2 bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                    <span>@(order.User?.Name.Substring(0, 1))</span>
-                                                </div>
-                                                <div>
-                                                    <div class="fw-bold">@order.User?.Name</div>
-                                                    <small class="text-muted">@(order.User?.Email ?? "Không có email")</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>@order.OverDateTime.ToString("dd/MM/yyyy HH:mm")</td>
-                                        <td>
-                                            @{
-                                                var total = order.OrderDetails.Sum(od => od.UnitPrice * od.Quantity);
-                                            }
-                                            <span class="price"> </span>
-                                        <td>
-                                            @{
-                                                // Giả định status. Thay thế bằng trạng thái thực từ model của bạn
-                                                string status = order.Id % 3 == 0 ? "completed" : (order.Id % 3 == 1 ? "pending" : "cancelled");
-                                                string statusText = status == "completed" ? "Hoàn thành" : (status == "pending" ? "Đang xử lý" : "Đã hủy");
-                                            }
-                                            <span class="badge-status badge-@status">@statusText</span>
-                                        </td>
-                                        <td>
-                                            <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-primary action-btn">
-                                                <i class="fas fa-eye"></i> Chi tiết
-                                            </a>
-                                            <button class="btn btn-warning action-btn">
-                                                <i class="fas fa-edit"></i> Sửa
-                                            </button>
-                                            <button class="btn btn-danger action-btn">
-                                                <i class="fas fa-trash"></i> Xóa
-                                            </button>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td colspan="6">
-                                        <div class="no-data">
-                                            <i class="fas fa-box-open d-block"></i>
-                                            <p>Không có đơn hàng nào.</p>
-                                            <button class="btn btn-primary">Tạo đơn hàng</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="card-footer">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center mb-0">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1">Trước</a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Sau</a>
-                        </li>
-                    </ul>
-                </nav>
             </div>
         </div>
     </div>
-
-    <footer class="mt-4 py-4">
-        <div class="container">
-            <div class="text-center text-muted ">
-                <p class="text-light">&copy; 2025 Shop Admin. Tất cả quyền được bảo lưu.</p>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="number">16</div>
+                    <div class="label">Đang xử lý</div>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-spinner"></i>
+                </div>
             </div>
         </div>
-    </footer>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="number">156</div>
+                    <div class="label">Hoàn thành</div>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="number">8</div>
+                    <div class="label">Đã hủy</div>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<!-- Page Title and Actions -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-0">
+            <h2 class="page-title mb-0">
+                <i class="fas fa-shopping-cart"></i> Danh Sách Đơn Hàng
+            </h2>
+            <div>
+                <button class="btn btn-primary me-2">
+                    <i class="fas fa-plus me-1"></i> Tạo đơn hàng
+                </button>
+                <button class="btn btn-outline-light">
+                    <i class="fas fa-file-export me-1"></i> Xuất Excel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4 mb-3 mb-md-0">
+                <label class="form-label text-light">Tìm kiếm</label>
+                <div class="input-group">
+                    <input type="text" class="form-control bg-dark text-light border-dark" placeholder="Tìm theo ID, tên khách hàng...">
+                    <button class="btn btn-primary" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3 mb-md-0">
+                <label class="form-label text-light">Trạng thái</label>
+                <select class="form-select bg-dark text-light border-dark">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="pending">Đang xử lý</option>
+                    <option value="completed">Hoàn thành</option>
+                    <option value="cancelled">Đã hủy</option>
+                </select>
+            </div>
+            <div class="col-md-3 mb-3 mb-md-0">
+                <label class="form-label text-light">Từ ngày</label>
+                <input type="date" class="form-control bg-dark text-light border-dark">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label text-light">Đến ngày</label>
+                <input type="date" class="form-control bg-dark text-light border-dark">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order List -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Khách hàng</th>
+                        <th>Ngày đặt</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var order in Model)
+                        {
+                            <tr>
+                                <td>#@order.Id</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar me-2 bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <span>@(order.User?.Name.Substring(0, 1))</span>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">@order.User?.Name</div>
+                                            <small class="text-muted">@(order.User?.Email ?? "Không có email")</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>@order.OverDateTime.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    @{
+                                        var total = order.OrderDetails.Sum(od => od.UnitPrice * od.Quantity);
+                                    }
+                                    <span class="price">
+                                        @total
+                                    </span>
+                                </td>
+                                <td>
+                                    @{
+                                        // Giả định status. Thay thế bằng trạng thái thực từ model của bạn
+                                        string status = order.Id % 3 == 0 ? "completed" : (order.Id % 3 == 1 ? "pending" : "cancelled");
+                                        string statusText = status == "completed" ? "Hoàn thành" : (status == "pending" ? "Đang xử lý" : "Đã hủy");
+                                    }
+                                    <span class="badge-status badge-@status">@statusText</span>
+                                </td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-primary action-btn">
+                                        <i class="fas fa-eye"></i> Chi tiết
+                                    </a>
+                                    <button class="btn btn-warning action-btn">
+                                        <i class="fas fa-edit"></i> Sửa
+                                    </button>
+                                    <button class="btn btn-danger action-btn">
+                                        <i class="fas fa-trash"></i> Xóa
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6">
+                                <div class="no-data">
+                                    <i class="fas fa-box-open d-block"></i>
+                                    <p>Không có đơn hàng nào.</p>
+                                    <button class="btn btn-primary">Tạo đơn hàng</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center mb-0">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Trước</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Sau</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+@section Scripts {
     <script>
         // Tự động cập nhật ngày trong bộ lọc
         document.addEventListener('DOMContentLoaded', function () {
@@ -499,5 +240,4 @@
             }
         });
     </script>
-</body>
-</html>
+}
