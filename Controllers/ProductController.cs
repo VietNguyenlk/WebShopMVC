@@ -26,5 +26,13 @@ namespace AppMVC.Controllers
             var products = _context.Products.ToList();
             return View(products);
         }
+        // tim kiếm sản phầm
+        public IActionResult Search(string searchString)
+        {
+            var products = _context.Products
+                .Where(p => p.Name.Contains(searchString))
+                .ToList();
+            return View("Index", products);
+        }
     }
 }
